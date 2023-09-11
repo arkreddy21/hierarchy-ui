@@ -1,7 +1,7 @@
 "use client";
 import { AddEmployee } from "@/components/AddEmployee";
 import { employeeData, Employee } from "@/lib/data";
-import useLocalStorage from "@/lib/hooks";
+import { useLocalStorage } from "@/lib/hooks";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AddTeam } from "@/components/AddTeam";
@@ -9,8 +9,7 @@ import { EditInfo } from "@/components/EditInfo";
 import { Filter } from "@/components/Filter";
 
 export default function Home() {
-  // TODO use local storage
-  const [employees, setEmployees] = useState(employeeData);
+  const [employees, setEmployees] = useLocalStorage("employees", employeeData);
   const [selected, setSelected] = useState<null | Employee>(null);
   const ceo = employees.find((e) => e.parent === 0);
 
@@ -51,10 +50,18 @@ export default function Home() {
             <p>{entry.name}</p>
           </div>
           {entry.title === "Team leader" && (
-            <AddEmployee parent={entry} setEmployees={setEmployees} />
+            <AddEmployee
+              parent={entry}
+              employees={employees}
+              setEmployees={setEmployees}
+            />
           )}
           {entry.title.startsWith("Head of") && (
-            <AddTeam parent={entry} setEmployees={setEmployees} />
+            <AddTeam
+              parent={entry}
+              employees={employees}
+              setEmployees={setEmployees}
+            />
           )}
         </div>
         {entry.childs.map((eid) => {

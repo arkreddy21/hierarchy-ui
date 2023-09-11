@@ -14,10 +14,15 @@ import { Employee } from "@/lib/data";
 
 interface AddEmployeeProps {
   parent: Employee;
-  setEmployees: Dispatch<SetStateAction<(Employee)[]>>;
+  employees: Employee[];
+  setEmployees: Dispatch<SetStateAction<Employee[]>>;
 }
 
-export function AddEmployee({ parent, setEmployees }: AddEmployeeProps) {
+export function AddEmployee({
+  parent,
+  employees,
+  setEmployees,
+}: AddEmployeeProps) {
   const [name, setName] = useState("");
   const [id, setId] = useState("");
   const [email, setEmail] = useState("");
@@ -33,6 +38,11 @@ export function AddEmployee({ parent, setEmployees }: AddEmployeeProps) {
       parent: parent.id,
       childs: [],
     };
+    let ids = employees.map((e) => e.id);
+    if (ids.includes(parseInt(id))) {
+      console.log("employee id already exists");
+      return;
+    }
     // adding new member id to the parent object (team leader)
     let updatedParent = { ...parent, childs: [...parent.childs, parseInt(id)] };
     setEmployees((old) => {

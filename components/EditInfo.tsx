@@ -37,7 +37,6 @@ export function EditInfo({ entry, employees, setEmployees }: EditInfoProps) {
   const [teamId, setTeamId] = useState("");
   const [open, setOpen] = useState(false);
 
-
   const handleSubmit = () => {
     let newInfo: Employee = {
       title: entry.title,
@@ -83,7 +82,7 @@ export function EditInfo({ entry, employees, setEmployees }: EditInfoProps) {
       }
       return [...old];
     });
-    setOpen(false)
+    setOpen(false);
   };
 
   useEffect(() => {
@@ -158,32 +157,33 @@ export function EditInfo({ entry, employees, setEmployees }: EditInfoProps) {
               />
             </div>
           )}
-          {entry.title === "Team member" && (
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right">Team</Label>
-              <Select
-                onValueChange={(v) => {
-                  setTeamId(v);
-                }}
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="change team" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {teams &&
-                      Object.entries(teams).map(([k, v]: any) => {
-                        return (
-                          <SelectItem key={v} value={v}>
-                            {k}
-                          </SelectItem>
-                        );
-                      })}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+          {entry.title === "Team member" &&
+            employees.find((e) => e.id === entry.parent)?.childs.length > 1 && (
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">Team</Label>
+                <Select
+                  onValueChange={(v) => {
+                    setTeamId(v);
+                  }}
+                >
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="change team" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {teams &&
+                        Object.entries(teams).map(([k, v]: any) => {
+                          return (
+                            <SelectItem key={v} value={v}>
+                              {k}
+                            </SelectItem>
+                          );
+                        })}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
         </div>
         <DialogFooter>
           <Button type="submit" onClick={handleSubmit}>

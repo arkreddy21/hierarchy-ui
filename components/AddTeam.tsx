@@ -12,14 +12,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState, Dispatch, SetStateAction } from "react";
 import { Employee } from "@/lib/data";
-import { Separator } from "@/components/ui/separator"
+import { Separator } from "@/components/ui/separator";
 
 interface AddTeamProps {
   parent: Employee;
-  setEmployees: Dispatch<SetStateAction<(Employee)[]>>;
+  employees: Employee[];
+  setEmployees: Dispatch<SetStateAction<Employee[]>>;
 }
 
-export function AddTeam({ parent, setEmployees }: AddTeamProps) {
+export function AddTeam({ parent, employees, setEmployees }: AddTeamProps) {
   // new team name
   const [team, setTeam] = useState("");
   // team leader info
@@ -34,7 +35,7 @@ export function AddTeam({ parent, setEmployees }: AddTeamProps) {
   const [phone2, setPhone2] = useState("");
 
   const handleSubmit = () => {
-    let newTeamLead:Employee = {
+    let newTeamLead: Employee = {
       id: parseInt(id),
       title: "Team leader",
       name,
@@ -42,7 +43,7 @@ export function AddTeam({ parent, setEmployees }: AddTeamProps) {
       phone: parseInt(phone),
       parent: parent.id,
       childs: [parseInt(id2)],
-      team
+      team,
     };
     let newMember: Employee = {
       id: parseInt(id2),
@@ -53,6 +54,11 @@ export function AddTeam({ parent, setEmployees }: AddTeamProps) {
       parent: parseInt(id),
       childs: [],
     };
+    let ids = employees.map((e) => e.id);
+    if (ids.includes(parseInt(id)) || ids.includes(parseInt(id2))) {
+      console.log("employee id already exists");
+      return;
+    }
     // adding team lead id to the parent object (Head of department)
     let updatedParent = { ...parent, childs: [...parent.childs, parseInt(id)] };
     setEmployees((old) => {
@@ -62,7 +68,7 @@ export function AddTeam({ parent, setEmployees }: AddTeamProps) {
       );
       return [...old, updatedParent, newTeamLead, newMember];
     });
-  }
+  };
 
   return (
     <Dialog>
@@ -98,9 +104,7 @@ export function AddTeam({ parent, setEmployees }: AddTeamProps) {
 
           <Separator className="my-4" />
 
-          <DialogDescription>
-            Team leader info
-          </DialogDescription>
+          <DialogDescription>Team leader info</DialogDescription>
 
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
@@ -149,9 +153,7 @@ export function AddTeam({ parent, setEmployees }: AddTeamProps) {
 
           <Separator className="my-4" />
 
-          <DialogDescription>
-            Team member info
-          </DialogDescription>
+          <DialogDescription>Team member info</DialogDescription>
 
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name2" className="text-right">
@@ -197,11 +199,12 @@ export function AddTeam({ parent, setEmployees }: AddTeamProps) {
               className="col-span-3"
             />
           </div>
-
         </div>
 
         <DialogFooter>
-          <Button type="submit" onClick={handleSubmit}>Save changes</Button>
+          <Button type="submit" onClick={handleSubmit}>
+            Save changes
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
