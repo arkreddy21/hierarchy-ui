@@ -30,10 +30,13 @@ export function EditInfo({ entry, employees, setEmployees }: EditInfoProps) {
   const [name, setName] = useState(entry.name);
   const [email, setEmail] = useState(entry.email);
   const [phone, setPhone] = useState(entry.phone.toString());
+  const [teamName, setTeamName] = useState("");
   // list of teams to select from. To change the team of a member
   const [teams, setTeams] = useState();
   // id of team lead of the selected team
-  const [team, setTeam] = useState("");
+  const [teamId, setTeamId] = useState("");
+  const [open, setOpen] = useState(false);
+
 
   const handleSubmit = () => {
     let newInfo: Employee = {
@@ -46,14 +49,18 @@ export function EditInfo({ entry, employees, setEmployees }: EditInfoProps) {
       childs: entry.childs,
     };
     if ("team" in entry) {
-      newInfo.team = entry.team;
+      newInfo.team = teamName;
     }
-    if(team && parseInt(team)!==entry.parent) {
-      var oldTeamLead = employees.find(e => e.id === entry.parent)
-      oldTeamLead && (oldTeamLead = {...oldTeamLead, childs:oldTeamLead.childs.filter((id)=>id!==entry.id)})
-      var newTeamLead = employees.find(e => e.id === parseInt(team))
-      newTeamLead && (newInfo.parent = newTeamLead.id)
-      newTeamLead && (newTeamLead.childs.push(newInfo.id))
+    if (teamId && parseInt(teamId) !== entry.parent) {
+      var oldTeamLead = employees.find((e) => e.id === entry.parent);
+      oldTeamLead &&
+        (oldTeamLead = {
+          ...oldTeamLead,
+          childs: oldTeamLead.childs.filter((id) => id !== entry.id),
+        });
+      var newTeamLead = employees.find((e) => e.id === parseInt(teamId));
+      newTeamLead && (newInfo.parent = newTeamLead.id);
+      newTeamLead && newTeamLead.childs.push(newInfo.id);
     }
 
     setEmployees((old) => {
@@ -62,7 +69,7 @@ export function EditInfo({ entry, employees, setEmployees }: EditInfoProps) {
         1,
         newInfo
       );
-      if (team && oldTeamLead && newTeamLead){
+      if (teamId && oldTeamLead && newTeamLead) {
         old.splice(
           old.findIndex((e) => e.id === oldTeamLead?.id),
           1,
@@ -76,6 +83,7 @@ export function EditInfo({ entry, employees, setEmployees }: EditInfoProps) {
       }
       return [...old];
     });
+    setOpen(false)
   };
 
   useEffect(() => {
@@ -87,14 +95,15 @@ export function EditInfo({ entry, employees, setEmployees }: EditInfoProps) {
         let teamName = employees.find((e) => e.id === childId)?.team;
         teamName && (teams[teamName] = childId);
       });
-      setTeams(teams)
+      setTeams(teams);
     }
+    entry.team && setTeamName(entry.team);
   }, [entry, employees]);
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Edit Details</Button>
+        <Button className="mr-2">Edit Details</Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
@@ -136,20 +145,40 @@ export function EditInfo({ entry, employees, setEmployees }: EditInfoProps) {
               className="col-span-3"
             />
           </div>
+          {entry.title === "Team leader" && (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="teamName" className="text-right">
+                Team name
+              </Label>
+              <Input
+                id="teamName"
+                value={teamName}
+                onChange={(e) => setTeamName(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+          )}
           {entry.title === "Team member" && (
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right">
-                Team
-              </Label>
-              <Select onValueChange={(v)=>{setTeam(v)}}>
+              <Label className="text-right">Team</Label>
+              <Select
+                onValueChange={(v) => {
+                  setTeamId(v);
+                }}
+              >
                 <SelectTrigger className="col-span-3">
                   <SelectValue placeholder="change team" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {teams && (Object.entries(teams).map(([k,v]:any)=>{
-                      return <SelectItem key={v} value={v} >{k}</SelectItem>
-                    }))}
+                    {teams &&
+                      Object.entries(teams).map(([k, v]: any) => {
+                        return (
+                          <SelectItem key={v} value={v}>
+                            {k}
+                          </SelectItem>
+                        );
+                      })}
                   </SelectGroup>
                 </SelectContent>
               </Select>

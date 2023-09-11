@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AddTeam } from "@/components/AddTeam";
 import { EditInfo } from "@/components/EditInfo";
+import { Filter } from "@/components/Filter";
 
 export default function Home() {
   // TODO use local storage
@@ -19,13 +20,17 @@ export default function Home() {
         old.findIndex((e) => e.id === selected?.id),
         1
       );
-      let updatedParent = old.find(e=> e.id===selected?.parent)
-      updatedParent && (updatedParent.childs = updatedParent.childs.filter(id=> id!==selected?.id))
-      updatedParent && (old.splice(
-        old.findIndex((e) => e.id === updatedParent?.id),
-        1,
-        updatedParent
-      ))
+      let updatedParent = old.find((e) => e.id === selected?.parent);
+      updatedParent &&
+        (updatedParent.childs = updatedParent.childs.filter(
+          (id) => id !== selected?.id
+        ));
+      updatedParent &&
+        old.splice(
+          old.findIndex((e) => e.id === updatedParent?.id),
+          1,
+          updatedParent
+        );
       return [...old];
     });
     setSelected(null);
@@ -38,8 +43,10 @@ export default function Home() {
           className="rounded border-black border-2 p-2 cursor-pointer flex flex-row items-center justify-between"
           onClick={() => setSelected(entry)}
         >
-          <div>
-            {entry.title === "Team leader" && <p className="font-semibold">Team: {entry.team}</p>}
+          <div className="max-w-[60%]">
+            {entry.title === "Team leader" && (
+              <p className="font-semibold">Team: {entry.team}</p>
+            )}
             <p className="font-semibold">{entry.title}</p>
             <p>{entry.name}</p>
           </div>
@@ -64,16 +71,25 @@ export default function Home() {
         {ceo && <Entry key={ceo.id} entry={ceo} />}
       </section>
       <section className="grow p-2">
+        <div className="flex flex-row items-center justify-evenly">
+          <h1 className="text-lg font-semibold">Hierarchy UI</h1>
+          <Filter employees={employees} />
+        </div>
         {selected && (
           <div className="bg-slate-300 w-fit p-6 rounded mt-4">
             <p>Title: {selected.title}</p>
             <p>Name: {selected.name}</p>
             <p>Phone no: {selected.phone}</p>
             <p>Email: {selected.email}</p>
-            <EditInfo key={selected.id} entry={selected} employees={employees} setEmployees={setEmployees} />
-            {selected.title === "Team member" && (
-              <Button onClick={deleteMember}>delete member</Button>
-            )}
+            <EditInfo
+              key={selected.id}
+              entry={selected}
+              employees={employees}
+              setEmployees={setEmployees}
+            />
+            {selected.title === "Team member" &&
+              employees.find((e) => e.id === selected.parent)?.childs.length >
+                1 && <Button onClick={deleteMember}>delete member</Button>}
           </div>
         )}
       </section>
