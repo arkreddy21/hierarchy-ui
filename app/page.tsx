@@ -4,6 +4,7 @@ import { employeeData, Employee, TeamMem } from "@/lib/data";
 import useLocalStorage from "@/lib/hooks";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { AddTeam } from "@/components/AddTeam";
 
 export default function Home() {
   // TODO use local storage
@@ -29,9 +30,16 @@ export default function Home() {
           className="rounded border-black border-2 p-2 cursor-pointer flex flex-row items-center justify-between"
           onClick={() => setSelected(entry)}
         >
-          <p>{entry.title}</p>
+          <div>
+            {"team" in entry && <p className="font-semibold">Team: {entry.team}</p>}
+            <p className="font-semibold">{entry.title}</p>
+            <p>{entry.name}</p>
+          </div>
           {entry.title === "Team leader" && (
             <AddEmployee parent={entry} setEmployees={setEmployees} />
+          )}
+          {entry.title.startsWith("Head of") && (
+            <AddTeam parent={entry} setEmployees={setEmployees} />
           )}
         </div>
         {entry.childs.map((eid) => {
@@ -40,7 +48,7 @@ export default function Home() {
         })}
       </div>
     );
-  }
+  };
 
   return (
     <main className="min-h-screen flex flex-row">

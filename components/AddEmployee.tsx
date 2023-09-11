@@ -22,7 +22,6 @@ export function AddEmployee({ parent, setEmployees }: AddEmployeeProps) {
   const [id, setId] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [team, setTeam] = useState("");
 
   const handleSubmit = () => {
     let newMember: Employee = {
@@ -34,6 +33,7 @@ export function AddEmployee({ parent, setEmployees }: AddEmployeeProps) {
       parent: parent.id,
       childs: [],
     };
+    // adding new member id to the parent object (team leader)
     let updatedParent = { ...parent, childs: [...parent.childs, parseInt(id)] };
     setEmployees((old) => {
       old.splice(
@@ -48,10 +48,10 @@ export function AddEmployee({ parent, setEmployees }: AddEmployeeProps) {
     <Dialog>
       <DialogTrigger asChild>
         <Button
-          className="h-6 w-6 text-lg"
+          className="h-6 w-fit text-sm"
           onClick={(e) => e.stopPropagation()}
         >
-          +
+          + member
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
