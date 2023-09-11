@@ -11,6 +11,7 @@ import { Filter } from "@/components/Filter";
 export default function Home() {
   const [employees, setEmployees] = useLocalStorage("employees", employeeData);
   const [selected, setSelected] = useState<null | Employee>(null);
+  const parent = employees.find((e) => e.id === selected?.parent);
   const ceo = employees.find((e) => e.parent === 0);
 
   const deleteMember = () => {
@@ -95,8 +96,10 @@ export default function Home() {
               setEmployees={setEmployees}
             />
             {selected.title === "Team member" &&
-              employees.find((e) => e.id === selected.parent)?.childs.length >
-                1 && <Button onClick={deleteMember}>delete member</Button>}
+              parent &&
+              parent.childs.length > 1 && (
+                <Button onClick={deleteMember}>delete member</Button>
+              )}
           </div>
         )}
       </section>

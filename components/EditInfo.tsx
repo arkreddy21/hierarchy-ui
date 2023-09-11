@@ -36,6 +36,7 @@ export function EditInfo({ entry, employees, setEmployees }: EditInfoProps) {
   // id of team lead of the selected team
   const [teamId, setTeamId] = useState("");
   const [open, setOpen] = useState(false);
+  const parent = employees.find((e) => e.id === entry.parent);
 
   const handleSubmit = () => {
     let newInfo: Employee = {
@@ -158,7 +159,8 @@ export function EditInfo({ entry, employees, setEmployees }: EditInfoProps) {
             </div>
           )}
           {entry.title === "Team member" &&
-            employees.find((e) => e.id === entry.parent)?.childs.length > 1 && (
+            parent &&
+            parent.childs.length > 1 && (
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-right">Team</Label>
                 <Select
