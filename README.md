@@ -24,4 +24,5 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - create a new team or edit existing team.
 - update employee information.
 - Filter an employee by Employee Name, Phone Number, and Email ID.
+- select a Team/Head and see all the employees who are under them.
 - data is stored locally in browser to persist hierarchy structure.

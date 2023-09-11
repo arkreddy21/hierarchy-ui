@@ -14,6 +14,16 @@ export default function Home() {
   const parent = employees.find((e) => e.id === selected?.parent);
   const ceo = employees.find((e) => e.parent === 0);
 
+  let subordinates: Employee[] = [];
+  const mapChilds = (entry: Employee|undefined|null) => {
+    entry?.childs.forEach((cid) => {
+      let child = employees.find((e) => e.id === cid);
+      child && subordinates.push(child);
+      mapChilds(employees.find((e) => e.id === cid));
+    });
+  };
+  mapChilds(selected)
+
   const deleteMember = () => {
     setEmployees((old) => {
       old.splice(
@@ -75,16 +85,16 @@ export default function Home() {
 
   return (
     <main className="min-h-screen flex flex-row">
-      <section className="bg-slate-200 w-96 pr-4">
+      <section className="bg-slate-200 w-96 pr-4 h-screen overflow-y-auto">
         {ceo && <Entry key={ceo.id} entry={ceo} />}
       </section>
-      <section className="grow p-2">
+      <section className="grow p-2 h-screen overflow-y-auto">
         <div className="flex flex-row items-center justify-evenly">
           <h1 className="text-lg font-semibold">Hierarchy UI</h1>
           <Filter employees={employees} />
         </div>
         {selected && (
-          <div className="bg-slate-300 w-fit p-6 rounded mt-4">
+          <div className="bg-slate-300 w-fit p-6 rounded my-4">
             <p>Title: {selected.title}</p>
             <p>Name: {selected.name}</p>
             <p>Phone no: {selected.phone}</p>
@@ -102,6 +112,15 @@ export default function Home() {
               )}
           </div>
         )}
+        {subordinates.length > 0 && <p>All employees under {selected?.name}</p>}
+        {subordinates.length > 0 && subordinates.map((entry)=>(
+          <div key={entry.id} className="bg-slate-300 w-fit p-6 rounded mt-4">
+            <p>Title: {entry.title}</p>
+            <p>Name: {entry.name}</p>
+            <p>Phone no: {entry.phone}</p>
+            <p>Email: {entry.email}</p>
+          </div>
+        ))}
       </section>
     </main>
   );
