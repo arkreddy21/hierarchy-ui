@@ -11,12 +11,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState, Dispatch, SetStateAction } from "react";
-import { Employee, TeamMem } from "@/lib/data";
+import { Employee } from "@/lib/data";
 import { Separator } from "@/components/ui/separator"
 
 interface AddTeamProps {
-  parent: Employee | TeamMem;
-  setEmployees: Dispatch<SetStateAction<(Employee | TeamMem)[]>>;
+  parent: Employee;
+  setEmployees: Dispatch<SetStateAction<(Employee)[]>>;
 }
 
 export function AddTeam({ parent, setEmployees }: AddTeamProps) {
@@ -34,7 +34,7 @@ export function AddTeam({ parent, setEmployees }: AddTeamProps) {
   const [phone2, setPhone2] = useState("");
 
   const handleSubmit = () => {
-    let newTeamLead:TeamMem = {
+    let newTeamLead:Employee = {
       id: parseInt(id),
       title: "Team leader",
       name,

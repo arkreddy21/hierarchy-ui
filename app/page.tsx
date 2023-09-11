@@ -1,15 +1,16 @@
 "use client";
 import { AddEmployee } from "@/components/AddEmployee";
-import { employeeData, Employee, TeamMem } from "@/lib/data";
+import { employeeData, Employee } from "@/lib/data";
 import useLocalStorage from "@/lib/hooks";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AddTeam } from "@/components/AddTeam";
+import { EditInfo } from "@/components/EditInfo";
 
 export default function Home() {
   // TODO use local storage
   const [employees, setEmployees] = useState(employeeData);
-  const [selected, setSelected] = useState<null | Employee | TeamMem>(null);
+  const [selected, setSelected] = useState<null | Employee>(null);
   const ceo = employees.find((e) => e.parent === 0);
 
   const deleteMember = () => {
@@ -18,12 +19,19 @@ export default function Home() {
         old.findIndex((e) => e.id === selected?.id),
         1
       );
+      let updatedParent = old.find(e=> e.id===selected?.parent)
+      updatedParent && (updatedParent.childs = updatedParent.childs.filter(id=> id!==selected?.id))
+      updatedParent && (old.splice(
+        old.findIndex((e) => e.id === updatedParent?.id),
+        1,
+        updatedParent
+      ))
       return [...old];
     });
     setSelected(null);
   };
 
-  const Entry = ({ entry }: { entry: Employee | TeamMem }) => {
+  const Entry = ({ entry }: { entry: Employee }) => {
     return (
       <div className="ml-6 my-2">
         <div
@@ -31,7 +39,7 @@ export default function Home() {
           onClick={() => setSelected(entry)}
         >
           <div>
-            {"team" in entry && <p className="font-semibold">Team: {entry.team}</p>}
+            {entry.title === "Team leader" && <p className="font-semibold">Team: {entry.team}</p>}
             <p className="font-semibold">{entry.title}</p>
             <p>{entry.name}</p>
           </div>
@@ -62,6 +70,7 @@ export default function Home() {
             <p>Name: {selected.name}</p>
             <p>Phone no: {selected.phone}</p>
             <p>Email: {selected.email}</p>
+            <EditInfo key={selected.id} entry={selected} employees={employees} setEmployees={setEmployees} />
             {selected.title === "Team member" && (
               <Button onClick={deleteMember}>delete member</Button>
             )}

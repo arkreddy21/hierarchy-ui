@@ -7,13 +7,11 @@ export interface Employee {
   email: string;
   parent: number;
   childs: number[];
+  team?: string;  // only exists on team lead
 }
 
-export interface TeamMem extends Employee {
-  team: string
-}
 
-export const employeeData: (Employee | TeamMem)[] = [
+export const employeeData: Employee[] = [
   {
     id: 7962,
     title: "CEO",
